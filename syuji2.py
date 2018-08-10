@@ -172,9 +172,9 @@ def Run(ct,*arg):
         for stroke in path:
             kaku = []
             for segment in stroke:
-                zahyo = [segment[0]*0.002,(100-segment[1])*0.002] 
+                zahyo = [segment[0]*0.001,(100-segment[1])*0.001] 
                 kaku.append(zahyo)
-            hen.append(kaku)
+            hen.append(kaku)	
         #print len(hen)  #len(hen)=6
         #for i in range(5):
             #print hen[i]
@@ -182,7 +182,6 @@ def Run(ct,*arg):
         
         t = int(len(hen) - 1) #ninobaai5
         #t = 1.0
-        
         for i in range(t):  #1strokegoto
             x0= copy.deepcopy(x)
             x1= copy.deepcopy(x)
@@ -191,19 +190,20 @@ def Run(ct,*arg):
             print x0[0],x0[1]
             print "\n"
             ct.robot.MoveToX(x0,5.0,blocking=True)
-            rospy.sleep(0.5)
-            x0[2]-= 0.3     #handnotakasa
+            rospy.sleep(1.0)
+            x0[2]-=0.3     #handnotakasa
             ct.robot.MoveToX(x0,10.0,blocking=True)
-            rospy.sleep(0.5)
+            rospy.sleep(1.0)
             for j in range(1, 20):
                 x0[0] = hen[i][j][0] + x1[0]
                 x0[1] = hen[i][j][1] + x1[1]
                 print x0[0],x0[1]
                 ct.robot.MoveToXI(x0, 0.1,blocking=True)
-                rospy.sleep(0.3)
+                rospy.sleep(1.0)
             x0[2]+=0.3
             ct.robot.MoveToX(x0,10.0,blocking=True)
-            rospy.sleep(0.5)
+            rospy.sleep(1.0)
+	    print "\n"
         
         q= [-0.02225494707637879, 0.027604753814144237, 0.02256845844164128, -2.2001560115435073, -0.00047772651727832574, 0.6569580325147487, 0.0010119170182285682]   #First position
         ct.robot.MoveToQ(q,10.0)
