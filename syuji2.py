@@ -172,7 +172,7 @@ def Run(ct,*arg):
         for stroke in path:
             kaku = []
             for segment in stroke:
-                zahyo = [segment[0]*0.001,(100-segment[1])*0.001] 
+                zahyo = [segment[0]*0.0005,(100-segment[1])*0.0005] 
                 kaku.append(zahyo)
             hen.append(kaku)	
         #print len(hen)  #len(hen)=6
@@ -180,29 +180,35 @@ def Run(ct,*arg):
             #print hen[i]
             #print '\n'
         
-        t = int(len(hen) - 1) #ninobaai5
+        t = int(len(hen)) #ninobaai6
+        print t
         #t = 1.0
+        x[2]-= 0.2
+        ct.robot.MoveToX(x,7.0,blocking=True)
+        rospy.sleep(1.0)
+        
         for i in range(t):  #1strokegoto
             x0= copy.deepcopy(x)
             x1= copy.deepcopy(x)
-            x0[0]+= hen[i][0][0]
-            x0[1]+= hen[i][0][1]
+            x0[0]+= hen[i][0][1]
+            x0[1]-= hen[i][0][0]
             print x0[0],x0[1]
             print "\n"
+            ct.robot.MoveToX(x0,3.0,blocking=True)#moto5
+            rospy.sleep(1.0)
+            x0[2]-=0.1     #handnotakasa
             ct.robot.MoveToX(x0,5.0,blocking=True)
-            rospy.sleep(1.0)
-            x0[2]-=0.3     #handnotakasa
-            ct.robot.MoveToX(x0,10.0,blocking=True)
-            rospy.sleep(1.0)
+            rospy.sleep(1.5)
             for j in range(1, 20):
-                x0[0] = hen[i][j][0] + x1[0]
-                x0[1] = hen[i][j][1] + x1[1]
+                x0[0] = hen[i][j][1] + x1[0]
+                x0[1] = x1[1] - hen[i][j][0]
                 print x0[0],x0[1]
                 ct.robot.MoveToXI(x0, 0.1,blocking=True)
-                rospy.sleep(1.0)
-            x0[2]+=0.3
-            ct.robot.MoveToX(x0,10.0,blocking=True)
-            rospy.sleep(5.0)
+                rospy.sleep(1.5)
+            print "\n"
+            x0[2]+=0.1
+            ct.robot.MoveToX(x0,5.0,blocking=True)
+            rospy.sleep(2.0)#moto5.0
 	    print "\n"
         
         q= [-0.02225494707637879, 0.027604753814144237, 0.02256845844164128, -2.2001560115435073, -0.00047772651727832574, 0.6569580325147487, 0.0010119170182285682]   #First position
