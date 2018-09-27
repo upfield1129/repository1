@@ -202,11 +202,10 @@ def Run(ct,*arg):
         x3 = copy.deepcopy(x)
         x3[2]-= 0.25
         ct.robot.MoveToX(x3,3.0,blocking=True)
-        
+        rospy.sleep(1.0)
         
         for i in range(t):  #1strokegoto
             x0= copy.deepcopy(x3)
-            x1= copy.deepcopy(x3)
             x0[0]+= pen[i][0][1]
             x0[1]-= pen[i][0][0]
             print x0[0],x0[1]
@@ -218,31 +217,36 @@ def Run(ct,*arg):
             rospy.sleep(1.0)
             x_traj= []
             t_traj= []
-            for j in range(1,int(len(pen[i]))):
-                t_traj.append(j*20)
-                x0[0] = pen[i][j][1] + x1[0]
-                x0[1] = x1[1] - pen[i][j][0] 
-                print x0[0],x0[1]
-                x_traj.append(x0)
-            ct.robot.FollowXTraj(x_traj, t_traj)
-            rospy.sleep(5.0)
+            for j in range(1,len(pen[i])):
+                t_traj.append(j*0.3)
+                x1 = copy.deepcopy(x0) 
+                x1[0] += pen[i][j][1] - pen[i][0][1]
+                x1[1] -= pen[i][j][0] - pen[i][0][0]
+                print x1[0],x1[1]
+                x_traj.append(x1)
+            print t_traj
+            print "\n"
+            print x_traj
+            ct.robot.FollowXTraj(x_traj, t_traj, blocking=True)
+            rospy.sleep(3.0)
             print "\n"    
-            x0[2]+=0.05
-            ct.robot.MoveToX(x0,3.0,blocking=True)
+            x1[2]+= 0.05
+            ct.robot.MoveToX(x1,3.0,blocking=True)
+            print "next"
+            print "\n"
             rospy.sleep(0.5)
+        print "END"
         
         q= [-0.02225494707637879, 0.027604753814144237, 0.02256845844164128, -2.2001560115435073, -0.00047772651727832574, 0.6569580325147487, 0.0010119170182285682]   #First position
         ct.robot.MoveToQ(q,10.0)
-        rospy.sleep(1.0)
-        x[0] += 0.01
-        ct.robot.MoveToX(x,5.0,blocking=True)
-        rospy.sleep(1.0)                    #nimojime
-    
+        #rospy.sleep(1.0)
+        #x[1] += pen[0][0][1] - pen[t-1][int(len(pen[t-1]))-1][1] 
+        #x[1] -= 0.1
+        #ct.robot.MoveToX(x,10.0,blocking=True)
+        #rospy.sleep(1.0)                    ##nimojime
+    #xygyaku 
     q= [-0.02225494707637879, 0.027604753814144237, 0.02256845844164128, -2.2001560115435073, -0.00047772651727832574, 0.6569580325147487, 0.0010119170182285682]   #First position
     ct.robot.MoveToQ(q,10.0)
-    
-    #trajdekita
-    #xygyaku 
         
             
         
