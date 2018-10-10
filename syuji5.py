@@ -159,14 +159,17 @@ def Run(ct,*arg):
 #qplot -x -s 'set size square' /tmp/kanji.txt w lp
 #qplot -x -3d -s 'set size square' /tmp/kanji.txt w p
 #'''
-   
+    x= list(ct.robot.FK())
+    x[0]+=0.15
+    x[2]-=0.25
+    ct.robot.MoveToX(x,5.0,blocking=True)
+    rospy.sleep(2.0)
 
     while True:
         c= raw_input('type a kanji: ')
         if c in ('','q'):  break
         path= getPathForChar(data, unicode(c,'utf8'))
         if path is None:  continue
-        x= list(ct.robot.FK())
         
 	
 	hen = []
@@ -199,21 +202,23 @@ def Run(ct,*arg):
             #print '\n'
                 
 	t = int(len(pen))
+	print x[0]
         #t = 1.0
-        x3 = copy.deepcopy(x)
-        x3[2]-= 0.25
-        ct.robot.MoveToX(x3,5.0,blocking=True)
-        rospy.sleep(1.0)
+        #x3 = copy.deepcopy(x)
+        #x3[0]+= 0.15
+        #x3[2]-= 0.25
+        #ct.robot.MoveToX(x3,5.0,blocking=True)
+        #rospy.sleep(1.0)
         for i in range(t):  #1strokegoto
-            x0= copy.deepcopy(x3)
+            x0= copy.deepcopy(x)
             x0[0]+= pen[i][0][1]
             x0[1]-= pen[i][0][0]
-            print x0[0],x0[1]
-            print "\n"
-            ct.robot.MoveToX(x0,5.0,blocking=True)
+            #print x0[0],x0[1]
+            #print "\n"
+            ct.robot.MoveToX(x0,2.0,blocking=True)
             rospy.sleep(2.0)
             x0[2]-= 0.05     #handnotakasa
-            ct.robot.MoveToX(x0,3.0,blocking=True)
+            ct.robot.MoveToX(x0,2.0,blocking=True)
             rospy.sleep(1.0)
             x_traj= []
             t_traj= []
@@ -222,34 +227,42 @@ def Run(ct,*arg):
                 x1 = copy.deepcopy(x0) 
                 x1[0] += pen[i][j][1] - pen[i][0][1]
                 x1[1] -= pen[i][j][0] - pen[i][0][0]
-                print x1[0],x1[1]
+                #print x1[0],x1[1]
                 x_traj.append(x1)
-            print t_traj
+            #print t_traj
             print "\n"
-            print x_traj
+            #print x_traj
             ct.robot.FollowXTraj(x_traj, t_traj, blocking=True)
-            rospy.sleep(3.0)
+            rospy.sleep(2.0)
             print "\n"    
             x1[2]+= 0.05
-            ct.robot.MoveToX(x1,3.0,blocking=True)
+            ct.robot.MoveToX(x1,2.0,blocking=True)
             print "next"
             print "\n"
             rospy.sleep(1.0)
         print "END"
         
-        q= [-0.02225494707637879, 0.027604753814144237, 0.02256845844164128, -2.2001560115435073, -0.00047772651727832574, 0.6569580325147487, 0.0010119170182285682]   #First position
-        ct.robot.MoveToQ(q,5.0)
-        #rospy.sleep(1.0)
+        #q= [-0.02225494707637879, 0.027604753814144237, 0.02256845844164128, -2.2001560115435073, -0.00047772651727832574, 0.6569580325147487, 0.0010119170182285682]   #First position
+        #ct.robot.MoveToQ(q,7.0)
+        #rospy.sleep(2.0)
+        #x= list(ct.robot.FK())
         #x1[2] += 0.25
-        #x1[1] += pen[0][0][0] - pen[t-1][int(len(pen[t-1]))-1][0] 
-        ##x2 = copy.deepcopy(x)
-        #x1[0] -= 0.2
-        #ct.robot.MoveToX(x1,7.0,blocking=True)
-        #rospy.sleep(1.0)   
-        #print "nimojime"
+        h = abs(pen[0][0][1] - pen[t-1][len(pen[t-1])-1][1])
+        #k = abs(pen[t-1][len(pen[t-1])-1][0] - pen[0][0][0])
+        p = 0.02 + h
+        print p
+        #x2 = copy.deepcopy(x)
+        x1[0] -= p
+        x1[1] = x[1]
+        #x1[1] += k
+        #print x1[0]
+        ct.robot.MoveToX(x1,5.0,blocking=True)
+        rospy.sleep(2.0)   
+        print "tuginomoji"
+        x = copy.deepcopy(x1)
     #xygyaku 
     q= [-0.02225494707637879, 0.027604753814144237, 0.02256845844164128, -2.2001560115435073, -0.00047772651727832574, 0.6569580325147487, 0.0010119170182285682]   #First position
-    ct.robot.MoveToQ(q,10.0)
+    ct.robot.MoveToQ(q,5.0)
         
             
         
